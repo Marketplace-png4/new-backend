@@ -41,9 +41,31 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
+      // allow requests with no origin (server-to-server, curl, Postman)
+      if (!origin) return callback(null, true);
+
+      // exact matches from allowedOrigins
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+
+      // allow Netlify and Vercel preview/deploy domains
+      try {
+        if (origin.endsWith('.netlify.app') || origin.endsWith('.vercel.app')) return callback(null, true);
+      } catch (e) {
+        // fall through to deny
       }
+
+      // support extra patterns passed via ALLOW_ORIGINS (comma-separated)
+      const extra = (process.env.ALLOW_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+      for (const pattern of extra) {
+        if (!pattern) continue;
+        if (pattern.startsWith('*')) {
+          const suffix = pattern.replace(/^\*/,'');
+          if (origin.endsWith(suffix)) return callback(null, true);
+        } else if (origin === pattern) {
+          return callback(null, true);
+        }
+      }
+
       return callback(new Error(`CORS policy: Origin ${origin} not allowed`), false);
     },
     credentials: true,
