@@ -24,11 +24,13 @@ if (useInMemoryDb) {
 const app = express();
 const PORT = process.env.PORT || 10000;
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:3000',
-  process.env.FRONTEND_URL_PRODUCTION || 'https://joshua-marketplace.netlify.app',
+  process.env.FRONTEND_URL,
+  process.env.FRONTEND_URL_PRODUCTION,
+  process.env.FRONTEND_URL_DEV,
+  'http://localhost:3000',
   'http://localhost:5173',
   'http://127.0.0.1:5173',
-];
+].filter(Boolean);
 
 app.set('trust proxy', 1);
 applySecurityMiddleware(app);
@@ -42,7 +44,7 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
-      return callback(new Error('CORS policy: Origin not allowed'), false);
+      return callback(new Error(`CORS policy: Origin ${origin} not allowed`), false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
