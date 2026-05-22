@@ -1,9 +1,13 @@
 import mongoose from 'mongoose';
 
 export async function connectDatabase() {
-  const uri = process.env.MONGODB_URI;
+  const uri = process.env.MONGODB_URI || process.env.DATABASE_URL || process.env.DATABASE_URI;
   if (!uri) {
-    throw new Error('MONGODB_URI is required when not running in FAKE_DB_MODE');
+    throw new Error('MONGODB_URI or DATABASE_URL is required when not running in FAKE_DB_MODE');
+  }
+
+  if (!uri.startsWith('mongodb://') && !uri.startsWith('mongodb+srv://')) {
+    throw new Error('MongoDB URI must start with mongodb:// or mongodb+srv://. Check MONGODB_URI / DATABASE_URL values.');
   }
 
   mongoose.set('strictQuery', false);

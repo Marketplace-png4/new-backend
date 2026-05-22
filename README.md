@@ -18,11 +18,11 @@ copy .env.example .env
 ```
 
 3. Update the `.env` values for:
-- `MONGODB_URI`
+- `MONGODB_URI` or `DATABASE_URL`
 - `JWT_SECRET`
 - `JWT_REFRESH_SECRET`
 - `SUPABASE_URL`
-- `SUPABASE_KEY`
+- `SUPABASE_SERVICE_KEY`
 - `SUPABASE_BUCKET`
 - `FRONTEND_URL`
 

@@ -58,8 +58,8 @@ if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
 
 const isFakeDbMode = process.env.FAKE_DB_MODE === 'true';
 
-if (!process.env.MONGODB_URI && !isFakeDbMode && !useInMemoryDb) {
-  console.error('✗ MONGODB_URI is missing. Set it in .env or .env.example');
+if (!process.env.MONGODB_URI && !process.env.DATABASE_URL && !isFakeDbMode && !useInMemoryDb) {
+  console.error('✗ MONGODB_URI or DATABASE_URL is missing. Set one in .env or in Render environment variables.');
   process.exit(1);
 }
 
